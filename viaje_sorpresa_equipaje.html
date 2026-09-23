@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Qué me llevo? · Viaje sorpresa</title>
+<style>
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --ink:#111827;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --accent:#111827;
+  --soft:#eef2ff;
+  --success:#ecfdf5;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:linear-gradient(180deg,#f8fafc 0%,#eef2f7 100%);
+}
+.wrap{max-width:820px;margin:auto;padding:24px 16px 60px}
+.hero{
+  background:#111827;
+  color:white;
+  border-radius:24px;
+  padding:30px;
+  margin-bottom:18px;
+  box-shadow:0 16px 40px rgba(17,24,39,.12)
+}
+.hero h1{font-size:clamp(28px,6vw,46px);margin:0 0 10px;line-height:1}
+.hero p{margin:0;color:#d1d5db;line-height:1.55;max-width:650px}
+.badge{display:inline-block;background:rgba(255,255,255,.12);padding:7px 10px;border-radius:999px;font-size:12px;margin-bottom:15px}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:22px;
+  margin:14px 0;
+  box-shadow:0 5px 18px rgba(17,24,39,.045)
+}
+h2{font-size:19px;margin:0 0 14px}
+.small{font-size:13px;color:var(--muted);line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.hero{padding:24px}.card{padding:18px}}
+label.option{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:13px;border:1px solid var(--line);border-radius:13px;
+  cursor:pointer;transition:.15s;background:#fff
+}
+label.option:hover{border-color:#9ca3af;background:#fafafa}
+input[type=checkbox],input[type=radio]{margin-top:3px;accent-color:#111827}
+select,input[type=number]{
+  width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;
+  background:#fff;font-size:15px;color:var(--ink)
+}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:650px){.row{grid-template-columns:1fr}}
+button{
+  border:0;border-radius:14px;padding:14px 18px;font-weight:700;font-size:15px;cursor:pointer
+}
+.primary{background:#111827;color:#fff;width:100%;margin-top:8px}
+.secondary{background:#fff;border:1px solid var(--line);color:#111827}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+#result{display:none}
+.result-head{background:var(--success);border:1px solid #bbf7d0}
+ul{padding-left:20px}
+li{margin:7px 0;line-height:1.45}
+.cat{
+  margin-top:18px;padding-top:16px;border-top:1px solid var(--line)
+}
+.cat:first-of-type{border-top:0;padding-top:0}
+.tag{
+  display:inline-block;padding:5px 9px;border-radius:999px;
+  background:#f3f4f6;color:#374151;font-size:12px;margin:3px 4px 3px 0
+}
+footer{color:var(--muted);font-size:12px;text-align:center;margin-top:25px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="badge">Viaje sorpresa · sin spoilers</div>
+    <h1>¿Qué me llevo?</h1>
+    <p>Noema y Eva, como organizadoras del viaje, responden unas preguntas generales sobre clima, actividades y necesidades. La web genera para Noel una lista de ropa y material sin revelar el destino.</p>
+  </section>
+
+  <section class="card">
+      <h2>Instrucciones para Noema y Eva</h2>
+      <p class="small">Marcáis únicamente lo que Noel necesita saber para preparar la maleta. No pongáis nombres de ciudades, países, hoteles, aeropuertos ni actividades demasiado concretas que puedan desvelar la sorpresa.</p>
+    </section>
+
+  <form id="tripForm">
+
+    <section class="card">
+      <h2>1. ¿Quién está rellenando esto?</h2>
+      <div class="grid">
+        <label class="option"><input type="radio" name="organizer" value="Noema" checked><span><strong>Noema</strong><br><span class="small">Hermana de Noel</span></span></label>
+        <label class="option"><input type="radio" name="organizer" value="Eva"><span><strong>Eva</strong><br><span class="small">Prima de Noel</span></span></label>
+        <label class="option"><input type="radio" name="organizer" value="Noema y Eva"><span><strong>Las dos</strong><br><span class="small">Respuesta conjunta</span></span></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Duración del viaje</h2>
+      <div class="row">
+        <div>
+          <label class="small">Número de días</label>
+          <input id="days" type="number" min="1" max="30" value="3">
+        </div>
+        <div>
+          <label class="small">Tipo de equipaje</label>
+          <select id="luggage">
+            <option value="personal">Mochila / bolso personal</option>
+            <option value="cabin" selected>Maleta de cabina</option>
+            <option value="checked">Maleta facturada</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Temperatura aproximada</h2>
+      <div class="grid">
+        <label class="option"><input type="radio" name="temp" value="hot"><span><strong>Calor</strong><br><span class="small">Más de 25 °C</span></span></label>
+        <label class="option"><input type="radio" name="temp" value="mild" checked><span><strong>Templado</strong><br><span class="small">15–25 °C</span></span></label>
+        <label class="option"><input type="radio" name="temp" value="cool"><span><strong>Fresco</strong><br><span class="small">5–15 °C</span></span></label>
+        <label class="option"><input type="radio" name="temp" value="cold"><span><strong>Frío</strong><br><span class="small">0–5 °C</span></span></label>
+        <label class="option"><input type="radio" name="temp" value="verycold"><span><strong>Mucho frío</strong><br><span class="small">Bajo 0 °C</span></span></label>
+        <label class="option"><input type="radio" name="temp" value="variable"><span><strong>Muy variable</strong><br><span class="small">Conviene vestirse por capas</span></span></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4. Tiempo previsto</h2>
+      <div class="grid">
+        <label class="option"><input type="checkbox" name="weather" value="rain"><span>Lluvia probable</span></label>
+        <label class="option"><input type="checkbox" name="weather" value="wind"><span>Viento fuerte</span></label>
+        <label class="option"><input type="checkbox" name="weather" value="snow"><span>Nieve / hielo</span></label>
+        <label class="option"><input type="checkbox" name="weather" value="sun"><span>Mucho sol</span></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>5. Actividades</h2>
+      <div class="grid">
+        <label class="option"><input type="checkbox" name="activity" value="city"><span>Ciudad / turismo</span></label>
+        <label class="option"><input type="checkbox" name="activity" value="hike"><span>Senderismo / montaña</span></label>
+        <label class="option"><input type="checkbox" name="activity" value="beach"><span>Playa / piscina / spa</span></label>
+        <label class="option"><input type="checkbox" name="activity" value="formal"><span>Cena o evento elegante</span></label>
+        <label class="option"><input type="checkbox" name="activity" value="sport"><span>Actividad deportiva</span></label>
+        <label class="option"><input type="checkbox" name="activity" value="night"><span>Salir por la noche</span></label>
+        <label class="option"><input type="checkbox" name="activity" value="motor"><span>Moto / quad / actividad de aventura</span></label>
+        <label class="option"><input type="checkbox" name="activity" value="water"><span>Actividad acuática</span></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>6. ¿Hace falta algo especial?</h2>
+      <div class="grid">
+        <label class="option"><input type="checkbox" name="special" value="passport"><span>Pasaporte</span></label>
+        <label class="option"><input type="checkbox" name="special" value="id"><span>DNI / documentación</span></label>
+        <label class="option"><input type="checkbox" name="special" value="driving"><span>Carnet de conducir</span></label>
+        <label class="option"><input type="checkbox" name="special" value="adapter"><span>Adaptador de enchufe</span></label>
+        <label class="option"><input type="checkbox" name="special" value="cash"><span>Algo de efectivo</span></label>
+        <label class="option"><input type="checkbox" name="special" value="meds"><span>Medicación / botiquín</span></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>7. Calzado</h2>
+      <div class="grid">
+        <label class="option"><input type="checkbox" name="footwear" value="walking"><span>Zapatillas cómodas</span></label>
+        <label class="option"><input type="checkbox" name="footwear" value="hiking"><span>Botas / zapatillas de montaña</span></label>
+        <label class="option"><input type="checkbox" name="footwear" value="formal"><span>Calzado arreglado</span></label>
+        <label class="option"><input type="checkbox" name="footwear" value="sandals"><span>Chanclas / sandalias</span></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>8. Una última pista, sin revelar nada</h2>
+      <select id="specialLevel">
+        <option value="normal">No hace falta nada raro</option>
+        <option value="some">Hay alguna actividad especial</option>
+        <option value="important">Es importante seguir bien la lista</option>
+      </select>
+      <button class="primary" type="submit">Generar la lista para Noel</button>
+    </section>
+  </form>
+
+  <section id="result">
+    <div class="card result-head">
+      <h2>Lista de equipaje para Noel</h2>
+      <p class="small" id="summary"></p>
+      <div id="tags"></div>
+    </div>
+
+    <div class="card" id="list"></div>
+
+    <div class="actions">
+      <button class="secondary" onclick="copyList()">Copiar lista</button>
+      <button class="secondary" onclick="window.print()">Imprimir / guardar PDF</button>
+      <button class="secondary" onclick="location.reload()">Empezar de nuevo</button>
+    </div>
+  </section>
+
+  <footer>Diseñado para mantener el destino en secreto.</footer>
+</div>
+
+<script>
+const q = (s)=>document.querySelector(s);
+const qa = (s)=>[...document.querySelectorAll(s)];
+const checked = name => qa(`input[name="${name}"]:checked`).map(x=>x.value);
+
+function uniq(arr){ return [...new Set(arr)] }
+
+function addCategory(title, items){
+  if(!items.length) return "";
+  return `<div class="cat"><h2>${title}</h2><ul>${uniq(items).map(i=>`<li>${i}</li>`).join("")}</ul></div>`;
+}
+
+document.getElementById("tripForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const organizer = q('input[name="organizer"]:checked').value;
+  const days = Math.max(1, parseInt(q("#days").value || "1"));
+  const temp = q('input[name="temp"]:checked').value;
+  const weather = checked("weather");
+  const activity = checked("activity");
+  const special = checked("special");
+  const footwear = checked("footwear");
+  const luggage = q("#luggage").value;
+  const level = q("#specialLevel").value;
+
+  let clothing = [];
+  let outer = [];
+  let shoes = [];
+  let gear = [];
+  let docs = [];
+  let toiletries = [
+    "Neceser básico",
+    "Cepillo y pasta de dientes",
+    "Desodorante"
+  ];
+
+  const tshirts = Math.min(days, 6);
+  const underwear = Math.min(days + 1, 8);
+  const socks = Math.min(days + 1, 8);
+
+  clothing.push(`${tshirts} camiseta${tshirts>1?"s":""} / parte${tshirts>1?"s":""} de arriba`);
+  clothing.push(`${underwear} muda${underwear>1?"s":""} de ropa interior`);
+  clothing.push(`${socks} par${socks>1?"es":""} de calcetines`);
+  clothing.push(days <= 3 ? "1 pantalón principal + 1 alternativa" : "2–3 pantalones");
+
+  if(temp==="hot"){
+    clothing.push("Ropa ligera y transpirable","Pantalón corto");
+    outer.push("Capa fina para interiores con aire acondicionado");
+  }
+  if(temp==="mild"){
+    clothing.push("Ropa de entretiempo");
+    outer.push("Chaqueta o sudadera ligera");
+  }
+  if(temp==="cool"){
+    clothing.push("Camisetas de manga larga / capas");
+    outer.push("Sudadera o jersey","Chaqueta de abrigo medio");
+  }
+  if(temp==="cold"){
+    clothing.push("Capas térmicas o camiseta interior");
+    outer.push("Abrigo","Jersey cálido","Gorro");
+  }
+  if(temp==="verycold"){
+    clothing.push("Primera capa térmica","Calcetines gruesos");
+    outer.push("Abrigo de invierno","Forro polar o jersey térmico","Gorro","Guantes","Bufanda o braga de cuello");
+  }
+  if(temp==="variable"){
+    clothing.push("Ropa combinable por capas");
+    outer.push("Chaqueta ligera","Sudadera o jersey");
+  }
+
+  if(weather.includes("rain")){
+    outer.push("Chaqueta impermeable o chubasquero");
+    gear.push("Paraguas compacto");
+  }
+  if(weather.includes("wind")) outer.push("Cortavientos");
+  if(weather.includes("snow")){
+    outer.push("Guantes cálidos","Gorro");
+    gear.push("Ropa adecuada para nieve / superficies frías");
+  }
+  if(weather.includes("sun")){
+    gear.push("Gafas de sol","Protector solar");
+  }
+
+  if(activity.includes("city")){
+    shoes.push("Calzado cómodo para caminar");
+    gear.push("Mochila pequeña o bolso para el día");
+  }
+  if(activity.includes("hike")){
+    shoes.push("Botas o zapatillas de trekking con buen agarre");
+    clothing.push("Ropa técnica / cómoda para caminar");
+    gear.push("Mochila pequeña","Botella de agua");
+  }
+  if(activity.includes("beach")){
+    clothing.push("Bañador");
+    shoes.push("Chanclas / sandalias");
+    gear.push("Toalla ligera si no está incluida","Protector solar");
+  }
+  if(activity.includes("formal")){
+    clothing.push("Un conjunto arreglado");
+    shoes.push("Calzado adecuado para cena o evento");
+  }
+  if(activity.includes("sport")){
+    clothing.push("Ropa deportiva");
+    shoes.push("Zapatillas deportivas");
+  }
+  if(activity.includes("night")) clothing.push("Un conjunto para salir por la noche");
+  if(activity.includes("motor")){
+    clothing.push("Pantalón resistente / ropa cómoda para actividad de aventura");
+    shoes.push("Calzado cerrado");
+    gear.push("Guantes si la actividad lo requiere");
+  }
+  if(activity.includes("water")){
+    clothing.push("Bañador");
+    shoes.push("Escarpines o calzado acuático si tienes");
+    gear.push("Funda impermeable para móvil");
+  }
+
+  if(footwear.includes("walking")) shoes.push("Zapatillas cómodas");
+  if(footwear.includes("hiking")) shoes.push("Botas / zapatillas de montaña");
+  if(footwear.includes("formal")) shoes.push("Calzado arreglado");
+  if(footwear.includes("sandals")) shoes.push("Chanclas / sandalias");
+
+  if(special.includes("passport")) docs.push("Pasaporte vigente");
+  if(special.includes("id")) docs.push("DNI / documentación personal");
+  if(special.includes("driving")) docs.push("Carnet de conducir");
+  if(special.includes("adapter")) gear.push("Adaptador de enchufe");
+  if(special.includes("cash")) docs.push("Algo de efectivo");
+  if(special.includes("meds")) toiletries.push("Medicación habitual / pequeño botiquín");
+
+  gear.push("Cargador del móvil","Batería externa si tienes");
+  docs.push("Tarjeta bancaria");
+
+  if(luggage==="personal"){
+    gear.push("Prioriza formatos pequeños y prendas combinables");
+  } else if(luggage==="cabin"){
+    gear.push("Líquidos en formato compatible con equipaje de cabina");
+  }
+
+  if(level==="important"){
+    gear.unshift("IMPORTANTE: revisa toda la lista; hay elementos necesarios para alguna actividad");
+  }
+
+  const tags = [];
+  const tempNames={hot:"calor",mild:"templado",cool:"fresco",cold:"frío",verycold:"mucho frío",variable:"temperatura variable"};
+  tags.push(tempNames[temp]);
+  if(weather.includes("rain")) tags.push("lluvia");
+  if(weather.includes("snow")) tags.push("nieve");
+  if(activity.includes("hike")) tags.push("montaña");
+  if(activity.includes("beach") || activity.includes("water")) tags.push("agua");
+  if(activity.includes("formal")) tags.push("arreglado");
+
+  q("#summary").textContent = `Respuesta de ${organizer}. Viaje de ${days} día${days>1?"s":""}. La selección está pensada para que Noel prepare la maleta sin descubrir el destino.`;
+  q("#tags").innerHTML = tags.map(t=>`<span class="tag">${t}</span>`).join("");
+
+  q("#list").innerHTML =
+    addCategory("Ropa", clothing) +
+    addCategory("Abrigo y protección", outer) +
+    addCategory("Calzado", shoes) +
+    addCategory("Material", gear) +
+    addCategory("Documentación", docs) +
+    addCategory("Aseo y salud", toiletries);
+
+  q("#result").style.display="block";
+  q("#tripForm").style.display="none";
+  window.scrollTo({top:q("#result").offsetTop-12,behavior:"smooth"});
+});
+
+function copyList(){
+  const text = document.getElementById("list").innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    alert("Lista copiada");
+  });
+}
+</script>
+</body>
+</html>
